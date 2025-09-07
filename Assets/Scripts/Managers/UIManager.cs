@@ -1,5 +1,3 @@
-//UIManager.cs
-
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -43,6 +41,25 @@ public class UIManager : MonoBehaviour
     void Start()
     {
         SetupButtons();
+        
+        // DEBUG: Check if player exists
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player == null)
+        {
+            Debug.LogError("UIManager: Player not found! Make sure player has 'Player' tag.");
+            return;
+        }
+        
+        // DEBUG: Check if health system exists
+        HealthSystem healthSystem = player.GetComponent<HealthSystem>();
+        if (healthSystem == null)
+        {
+            Debug.LogError("UIManager: HealthSystem not found on player!");
+            return;
+        }
+        
+        Debug.Log("UIManager: Player and HealthSystem found! Setting up health UI...");
+        
         SetupHealthUI();
         UpdateLevelText();
         
@@ -83,9 +100,18 @@ public class UIManager : MonoBehaviour
     
     void SetupHealthUI()
     {
-        if (healthContainer == null || heartPrefab == null) return;
+        if (healthContainer == null)
+        {
+            Debug.LogError("UIManager: Health Container not assigned!");
+            return;
+        }
         
-        // Find player's max health
+        if (heartPrefab == null)
+        {
+            Debug.LogError("UIManager: Heart Prefab not assigned!");
+            return;
+        }
+
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)
         {
@@ -94,7 +120,16 @@ public class UIManager : MonoBehaviour
             {
                 CreateHealthHearts(healthSystem.maxHealth);
                 healthSystem.OnHealthChanged.AddListener(UpdateHealthUI);
+                Debug.Log("UIManager: Health UI setup complete! Hearts: " + healthSystem.maxHealth);
             }
+            else
+            {
+                Debug.LogError("UIManager: HealthSystem component missing on player!");
+            }
+        }
+        else
+        {
+            Debug.LogError("UIManager: Player object not found for health setup!");
         }
     }
     
@@ -111,11 +146,20 @@ public class UIManager : MonoBehaviour
     
     public void UpdateHealthUI(int currentHealth)
     {
-        if (healthHearts == null) return;
+        Debug.Log("UIManager: Updating health UI - " + currentHealth + " hearts");
+        
+        if (healthHearts == null)
+        {
+            Debug.LogError("UIManager: Health hearts array is null!");
+            return;
+        }
         
         for (int i = 0; i < healthHearts.Length; i++)
         {
-            healthHearts[i].color = i < currentHealth ? Color.white : Color.gray;
+            if (healthHearts[i] != null)
+            {
+                healthHearts[i].color = i < currentHealth ? Color.white : Color.gray;
+            }
         }
     }
     
@@ -143,10 +187,8 @@ public class UIManager : MonoBehaviour
             pauseMenuPanel.SetActive(false);
     }
     
-    // Call this when level completes
     public void OnLevelComplete()
     {
-        // You can add level complete UI here
         Invoke(nameof(LoadNextLevel), 2f);
     }
     

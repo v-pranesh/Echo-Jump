@@ -57,6 +57,12 @@ public class EnemyAI : MonoBehaviour
         startPosition = transform.position;
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
         
+        if (healthSystem != null)
+        {
+            healthSystem.OnDeath.AddListener(OnDeath);
+            Debug.Log("Enemy health events connected!");
+        }
+
         SetupEnemyStats();
         SetupHealthSystem();
     }
@@ -170,6 +176,7 @@ public class EnemyAI : MonoBehaviour
     
     void AttackPlayer()
     {
+        Debug.Log("Small enemy attacking! Damage: " + damage);
         lastAttackTime = Time.time;
         animator.SetTrigger(attackHash);
         

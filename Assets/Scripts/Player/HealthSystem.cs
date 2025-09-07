@@ -1,5 +1,3 @@
-//HealthSystem.cs
-
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -19,25 +17,35 @@ public class HealthSystem : MonoBehaviour
     {
         currentHealth = maxHealth;
         OnHealthChanged?.Invoke(currentHealth);
+        
+        // Auto-connect to UIManager
+        UIManager uiManager = FindObjectOfType<UIManager>();
+        if (uiManager != null)
+        {
+            OnHealthChanged.AddListener(uiManager.UpdateHealthUI);
+            Debug.Log("HealthSystem: Connected to UIManager automatically!");
+        }
+        else
+        {
+            Debug.LogError("HealthSystem: UIManager not found in scene!");
+        }
     }
     
-public void TakeDamage(int damage)
-{
-    if (isDead) return;
-    
-    currentHealth -= damage;
-    currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
-    
-    // ADD THIS DEBUG LINE:
-    Debug.Log("Player took " + damage + " damage! Health: " + currentHealth + "/" + maxHealth);
-    
-    OnHealthChanged?.Invoke(currentHealth);
-    
-    if (currentHealth <= 0 && !isDead)
+    public void TakeDamage(int damage)
     {
-        Die();
+        if (isDead) return;
+        
+        currentHealth -= damage;
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+        
+        Debug.Log("HealthSystem: Took " + damage + " damage! Health: " + currentHealth + "/" + maxHealth);
+        OnHealthChanged?.Invoke(currentHealth);
+        
+        if (currentHealth <= 0 && !isDead)
+        {
+            Die();
+        }
     }
-}
     
     public void Heal(int healAmount)
     {
@@ -46,12 +54,14 @@ public void TakeDamage(int damage)
         currentHealth += healAmount;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
         
+        Debug.Log("HealthSystem: Healed " + healAmount + " health! Health: " + currentHealth + "/" + maxHealth);
         OnHealthChanged?.Invoke(currentHealth);
     }
     
     void Die()
     {
         isDead = true;
+        Debug.Log("HealthSystem: Died!");
         OnDeath?.Invoke();
         
         if (gameObject.CompareTag("Player"))
