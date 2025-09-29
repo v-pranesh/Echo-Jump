@@ -1,27 +1,23 @@
-//AudioManager.cs
 using UnityEngine;
-using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class AudioManager : MonoBehaviour
 {
-    public static AudioManager Instance { get; private set; }
+    public static AudioManager Instance;
     
-    [System.Serializable]
-    public class Sound
-    {
-        public string name;
-        public AudioClip clip;
-        public float volume = 1f;
-        public float pitch = 1f;
-        public bool loop = false;
-    }
+    [Header("Music Tracks")]
+    public AudioClip menuMusic;
+    public AudioClip level1Music;
+    
+    [Header("SFX Sounds")]
+    public AudioClip jumpSFX;
+    public AudioClip attackSFX;
+    public AudioClip playerHurtSFX;
+    public AudioClip playerDeathSFX;
     
     [Header("Audio Sources")]
     public AudioSource musicSource;
     public AudioSource sfxSource;
-    
-    [Header("Sounds")]
-    public Sound[] sounds;
     
     void Awake()
     {
@@ -29,6 +25,7 @@ public class AudioManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            SceneManager.sceneLoaded += OnSceneLoaded;
         }
         else
         {
@@ -36,43 +33,56 @@ public class AudioManager : MonoBehaviour
         }
     }
     
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        Debug.Log("Scene loaded: " + scene.name);
+        
+        if (scene.name == "MainMenu")
+        {
+            PlayMenuMusic();
+        }
+        else if (scene.name == "Level1")
+        {
+            PlayLevel1Music();
+        }
+    }
+    
+    public void PlayMenuMusic()
+    {
+        if (menuMusic != null && musicSource.clip != menuMusic)
+        {
+            musicSource.clip = menuMusic;
+            musicSource.Play();
+            Debug.Log("Now playing Menu music");
+        }
+    }
+    
+    public void PlayLevel1Music()
+    {
+        if (level1Music != null && musicSource.clip != level1Music)
+        {
+            musicSource.clip = level1Music;
+            musicSource.Play();
+            Debug.Log("Now playing Level1 music");
+        }
+    }
+    
     public void PlaySFX(string soundName)
     {
-        Sound sound = System.Array.Find(sounds, s => s.name == soundName);
-        if (sound != null && sfxSource != null)
+        switch (soundName)
         {
-            sfxSource.PlayOneShot(sound.clip, sound.volume);
+            case "Jump":
+                if (jumpSFX != null) sfxSource.PlayOneShot(jumpSFX);
+                break;
+            case "Attack":
+                if (attackSFX != null) sfxSource.PlayOneShot(attackSFX);
+                break;
+            case "PlayerHurt":
+                if (playerHurtSFX != null) sfxSource.PlayOneShot(playerHurtSFX);
+                break;
+            case "PlayerDeath":
+                if (playerDeathSFX != null) sfxSource.PlayOneShot(playerDeathSFX);
+                break;
         }
-    }
-    
-    public void PlayMusic(string soundName)
-    {
-        Sound sound = System.Array.Find(sounds, s => s.name == soundName);
-        if (sound != null && musicSource != null)
-        {
-            musicSource.clip = sound.clip;
-            musicSource.volume = sound.volume;
-            musicSource.pitch = sound.pitch;
-            musicSource.loop = sound.loop;
-            musicSource.Play();
-        }
-    }
-    
-    public void StopMusic()
-    {
-        if (musicSource != null)
-            musicSource.Stop();
-    }
-    
-    public void SetMusicVolume(float volume)
-    {
-        if (musicSource != null)
-            musicSource.volume = volume;
-    }
-    
-    public void SetSFXVolume(float volume)
-    {
-        if (sfxSource != null)
-            sfxSource.volume = volume;
     }
 }

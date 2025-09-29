@@ -1,5 +1,3 @@
-//PlayerController.cs
-
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -20,6 +18,11 @@ public class PlayerController : MonoBehaviour
     public float groundCheckRadius = 0.2f;
     public LayerMask groundLayerMask;
     
+    [Header("Death Settings")]
+    public float deathDelay = 2f;
+    public bool isDead = false;
+    public float deathYThreshold = -10f;
+    
     // Components
     private Rigidbody2D rb;
     private Animator animator;
@@ -36,42 +39,35 @@ public class PlayerController : MonoBehaviour
     private readonly int isGroundedHash = Animator.StringToHash("IsGrounded");
     private readonly int attackHash = Animator.StringToHash("Attack");
     private readonly int hurtHash = Animator.StringToHash("Hurt");
+    private readonly int deathHash = Animator.StringToHash("Die");
     
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         healthSystem = GetComponent<HealthSystem>();
+        
+        // Subscribe to health system events
+        if (healthSystem != null)
+        {
+            healthSystem.OnDeath.AddListener(OnDeath);
+        }
     }
     
-void Update()
-{
-    CheckGrounded();
-    
-    // Always show ground status
-    Debug.Log("Is Grounded: " + isGrounded);
-    
-    if (Input.GetKeyDown(KeyCode.Space))
+    void Update()
     {
-        Debug.Log("Space pressed while grounded: " + isGrounded);
+        if (isDead) return;
+        
+        CheckGrounded();
+        CheckFallDeath();
+        HandleInput();
+        UpdateAnimations();
     }
-    
-    HandleInput();
-    UpdateAnimations();
-}
-
-// ADD THIS METHOD to see the ground check circle
-void OnDrawGizmos()
-{
-    if (groundCheck != null)
-    {
-        Gizmos.color = isGrounded ? Color.green : Color.red;
-        Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
-    }
-}
     
     void FixedUpdate()
     {
+        if (isDead) return;
+        
         HandleMovement();
     }
     
@@ -139,6 +135,16 @@ void OnDrawGizmos()
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayerMask);
     }
     
+    void CheckFallDeath()
+    {
+        // Check if player has fallen below death threshold
+        if (transform.position.y < deathYThreshold && !isDead)
+        {
+            Debug.Log("Player fell below death threshold! Y: " + transform.position.y);
+            Die();
+        }
+    }
+    
     void Flip()
     {
         facingRight = !facingRight;
@@ -155,9 +161,66 @@ void OnDrawGizmos()
     
     public void TakeDamage(int damage)
     {
+        if (isDead) return;
+        
         healthSystem.TakeDamage(damage);
         animator.SetTrigger(hurtHash);
         AudioManager.Instance?.PlaySFX("PlayerHurt");
+    }
+    
+    // Called by HealthSystem when player dies
+    void OnDeath()
+    {
+        if (isDead) return;
+        
+        Die();
+    }
+    
+    // Direct death method (for falling, etc.)
+    public void Die()
+    {
+        if (isDead) return;
+        
+        isDead = true;
+        
+        // Stop all movement immediately
+        rb.linearVelocity = Vector2.zero;
+        rb.simulated = false; // This stops all physics interactions
+        
+        // Disable the player's collider to prevent further collisions
+        Collider2D collider = GetComponent<Collider2D>();
+        if (collider != null)
+            collider.enabled = false;
+        
+        // Play death animation
+        animator.SetTrigger(deathHash);
+        
+        // Play death sound
+        AudioManager.Instance?.PlaySFX("PlayerDeath");
+        
+        Debug.Log("Player died! Going to GameOver in " + deathDelay + " seconds...");
+        
+        // Stop all coroutines and invokes to prevent conflicts
+        CancelInvoke();
+        
+        // Go to GameOver screen after delay
+        Invoke(nameof(GoToGameOver), deathDelay);
+    }
+    
+    void GoToGameOver()
+    {
+        Debug.Log("Loading GameOver scene...");
+        
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.GameOver();
+        }
+        else
+        {
+            Debug.LogError("GameManager instance not found! Loading scene directly...");
+            // Fallback: Load GameOver scene directly
+            UnityEngine.SceneManagement.SceneManager.LoadScene("GameOver");
+        }
     }
     
     // Called by animation event
@@ -166,16 +229,29 @@ void OnDrawGizmos()
         // Additional attack logic can be added here
     }
     
-    void OnDrawGizmosSelected()
+    // Visual debugging
+    void OnDrawGizmos()
     {
-        if (attackPoint == null) return;
-        
-        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
-        
+        // Always draw ground check
         if (groundCheck != null)
         {
             Gizmos.color = isGrounded ? Color.green : Color.red;
             Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
         }
+        
+        // Draw death threshold line
+        Gizmos.color = Color.red;
+        Vector3 deathLineStart = new Vector3(-10f, deathYThreshold, 0f);
+        Vector3 deathLineEnd = new Vector3(10f, deathYThreshold, 0f);
+        Gizmos.DrawLine(deathLineStart, deathLineEnd);
+    }
+    
+    void OnDrawGizmosSelected()
+    {
+        if (attackPoint == null) return;
+        
+        // Draw attack range
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
     }
 }

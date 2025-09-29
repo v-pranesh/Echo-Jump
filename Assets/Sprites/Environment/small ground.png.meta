@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: d60f5e81cbf43e9439b66884bffa3377
+guid: 32778ec0d11c93f4eac1b4ca90668e70
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -1556594603474302460
-    second: 8bit-pixel-art-game-level-260nw-2600132999_0
+      213: 2946246107752553792
+    second: small ground_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -51,7 +51,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 2000
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: 8bit-pixel-art-game-level-260nw-2600132999_0
+      name: small ground_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 578
-        height: 280
+        width: 2048
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 40acf90947dd56ae0800000000000000
-      internalID: -1556594603474302460
+      spriteID: 04dd771a93b23e820800000000000000
+      internalID: 2946246107752553792
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      8bit-pixel-art-game-level-260nw-2600132999_0: -1556594603474302460
+      small ground_0: 2946246107752553792
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

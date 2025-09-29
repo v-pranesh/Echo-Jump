@@ -84,8 +84,7 @@ public class GameManager : MonoBehaviour
     
     public void GameOver()
     {
-        gameEnded = true;
-        SceneManager.LoadScene(gameOverScene);
+        UnityEngine.SceneManagement.SceneManager.LoadScene("GameOver");
     }
     
     public void Victory()
@@ -107,10 +106,12 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1f;
         UIManager.Instance?.HidePauseMenu();
     }
-    
+
     public void RestartLevel()
     {
-        LoadLevel(currentLevel);
+        Debug.Log("🔄 RestartLevel called!");
+        currentLevel = 1;
+        SceneManager.LoadScene("Level1");
     }
     
     public void LoadMainMenu()
