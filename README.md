@@ -1,4 +1,4 @@
-# Echo Jump - Unity 2D Pixel-Art Platformer
+# Echo Jump - Unity 2D Pixel-Art Platformer Game
 
 A complete 2D pixel-art platformer game built in Unity featuring smooth player movement, enemy AI, combat system, multiple levels, and polished UI.
 
