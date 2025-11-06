@@ -1,15 +1,63 @@
-# Echo Jump - Unity 2D Pixel-Art Platformer Game
+# 🎮 Echo Jump
 
-A complete 2D pixel-art platformer game built in Unity featuring smooth player movement, enemy AI, combat system, multiple levels, and polished UI.
+**Echo Jump** is a fast-paced **2D pixel-art platformer** built in **Unity**.  
+Jump across moving platforms, fight enemies, collect coins and health pickups, and reach the end of each level with smooth controls and responsive combat.
 
-## 🎮 Features
+---
 
-- **Smooth Platforming**: Responsive player movement with running, jumping, and attacking
-- **Enemy AI System**: Three enemy types with different behaviors (Small, Medium, Hard)
-- **Combat System**: Sword attacks with hit detection and damage system
-- **Health System**: Heart-based health UI with damage feedback
-- **Level Progression**: Three progressively challenging levels with completion triggers
-- **Audio System**: Background music and sound effects for all actions
-- **UI System**: Complete menu system (Main Menu, Pause, Game Over, Victory)
-- **Moving Platforms**: Dynamic platforms that follow waypoint paths
-- **Collectibles**: Coins and health potions to enhance gameplay
+## 🚀 Features
+
+### ✅ Core Gameplay
+- Responsive 2D platformer movement  
+- Jumping, running, and mid-air control  
+- Sword-based melee combat  
+- Multiple enemy types with simple AI  
+- Fall detection and respawn system
+
+### ✅ Collectibles & Items
+- Coins to collect  
+- Heart / health pickups  
+- Score and health UI
+
+### ✅ UI & Menus
+- Main Menu  
+- Pause Menu  
+- Game Over Screen  
+- Level Complete Screen  
+- HUD showing health, score, and lives
+
+### ✅ Audio
+- Sound effects (jump, hit, enemy, footsteps)  
+- Background music  
+
+### ✅ Other Features
+- Camera follow system  
+- Player and enemy animations  
+- Tilemap-based level design  
+- Scene-based level loading
+
+---
+
+## 🛠️ Tech Used
+
+- **Unity (2D Core Template)**  
+- **C#**  
+- Unity Tilemaps  
+- Unity Animator  
+- Pixel-art assets (custom / asset store)
+
+---
+
+## 🎯 Controls
+
+| Action | Key |
+|--------|-----------------------------|
+| Move   | **A / D** or **← / →**      |
+| Jump   | **Space**                   |
+| Attack | **Left Click**              |
+| Pause  | **Esc**                     |
+
+---
+
+## 📂 Project Structure
+
